@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lab5 - Exercise 3</title>
+</head>
+<body>
+    <input type="text" id="textInput" placeholder="Enter User ID..." />
+    <label id="textLabel">ENSF381 Course</label>
+    <button id="redButton">Red</button>
+    <button id="blueButton">Blue</button>
+    <button id="greenButton">Green</button>
+    <button id="orangeButton">Orange</button>
+    <button id="purpleButton">Purple</button>
+
+    <script type="text/javascript">
+        const textInput = document.getElementById('textInput');
+        const textLabel = document.getElementById('textLabel');
+        const redButton = document.getElementById('redButton');
+        const blueButton = document.getElementById('blueButton');
+        const greenButton = document.getElementById('greenButton');
+        const orangeButton = document.getElementById('orangeButton');
+        const purpleButton = document.getElementById('purpleButton');
+
+        let usersData = [];
+
+        async function fetchUserData() {
+            try {
+                const response = await fetch('https://67c2039d61d8935867e520e7.mockapi.io/users_api');
+                usersData = await response.json();
+                console.log("Fetched User Data:", usersData);
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+                textLabel.textContent = "Failed to retrieve user data.";
+            }
+        }
+
+        function retrieveData() {
+            const userId = parseInt(textInput.value);
+
+            if (isNaN(userId)) {
+                textLabel.textContent = "Invalid input. Please enter a numeric User ID.";
+                console.log("Invalid input received:", textInput.value);
+                return;
+            }
+
+            let foundUser = null;
+
+            for (let i = 0; i < usersData.length; i++) {
+                if (parseInt(usersData[i].id) === userId) {
+                    foundUser = usersData[i];
+                    break;
+                }
+            }
+
+            if (foundUser) {
+                const userInfo = `ID: ${foundUser.id}, Name: ${foundUser.first_name}, Group: ${foundUser.user_group}`;
+                textLabel.textContent = userInfo;
+                console.log("User found:", userInfo);
+            } else {
+                textLabel.textContent = `No users were found with the provided User_ID: ${userId}`;
+                console.log(`No user found for ID: ${userId}`);
+            }
+        }
+
+        textInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                retrieveData();
+                textInput.value = '';
+            }
+        });
+
+        function changeLabelColor(color) {
+            textLabel.style.color = color;
+        }
+
+        redButton.addEventListener('click', function() { changeLabelColor('red'); });
+        blueButton.addEventListener('click', function() { changeLabelColor('blue'); });
+        greenButton.addEventListener('click', function() { changeLabelColor('green'); });
+        orangeButton.addEventListener('click', function() { changeLabelColor('orange'); });
+        purpleButton.addEventListener('click', function() { changeLabelColor('purple'); });
+
+        fetchUserData();
+    </script>
+</body>
+</html>
